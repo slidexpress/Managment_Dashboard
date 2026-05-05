@@ -1,0 +1,9 @@
+node_modules
+data/*.json
+!data/projects.json
+!data/users.json
+.env
+.DS_Store
+*.log
+test_out.txt
+test_hash.js

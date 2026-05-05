@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slidexpress — Project Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════ LOGIN / SIGNUP ══════════════════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-logo"><i class="fas fa-bolt"></i></div>
+      <h1>Slidexpress</h1>
+      <p>Project Tracker</p>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="login-form-wrap">
+      <form id="login-form">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="login-email" class="form-control" placeholder="you@slidexpress.com" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="login-password" class="form-control" placeholder="Password" required>
+        </div>
+        <button type="submit" class="btn-login" id="login-btn">
+          <span id="login-text">Sign In</span>
+          <span id="login-loading" style="display:none"><i class="fas fa-spinner fa-spin"></i></span>
+        </button>
+        <div id="login-error" class="login-error" style="display:none"></div>
+      </form>
+      <div class="login-switch">
+        Don't have an account? <a href="#" id="show-signup">Request Access →</a>
+      </div>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div id="signup-form-wrap" style="display:none">
+      <div id="signup-success-msg" style="display:none" class="signup-success">
+        <i class="fas fa-check-circle"></i>
+        <strong>Request submitted!</strong><br>
+        Admin will review and approve your access. Try logging in once approved.
+      </div>
+      <form id="signup-form" style="">
+        <div class="row g-2">
+          <div class="col-12 form-group">
+            <label>Full Name <span class="text-danger">*</span></label>
+            <input type="text" id="su-name" class="form-control" placeholder="John Doe" required>
+          </div>
+          <div class="col-12 form-group">
+            <label>Email Address <span class="text-danger">*</span></label>
+            <input type="email" id="su-email" class="form-control" placeholder="john@slidexpress.com" required>
+          </div>
+          <div class="col-6 form-group">
+            <label>Password <span class="text-danger">*</span></label>
+            <input type="password" id="su-password" class="form-control" placeholder="Min 6 characters">
+          </div>
+          <div class="col-6 form-group">
+            <label>Confirm Password</label>
+            <input type="password" id="su-confirm" class="form-control" placeholder="Repeat password">
+          </div>
+          <div class="col-12 form-group">
+            <label>Your Team</label>
+            <select id="su-team" class="form-select">
+              <option value="design">Design Team</option>
+              <option value="ppt">PPT Team</option>
+              <option value="general">General / Other</option>
+            </select>
+          </div>
+          <div class="col-12 form-group">
+            <label>Message to Admin <span class="text-muted">(optional)</span></label>
+            <textarea id="su-message" class="form-control" rows="2" placeholder="Briefly describe your role..."></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn-login" id="signup-btn">
+          <span id="signup-text">Submit Access Request</span>
+          <span id="signup-loading" style="display:none"><i class="fas fa-spinner fa-spin"></i></span>
+        </button>
+        <div id="signup-error" class="login-error" style="display:none"></div>
+      </form>
+      <div class="login-switch">
+        Already have an account? <a href="#" id="show-login">← Back to Sign In</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ MAIN APP ════════════════════════════════ -->
+<div id="app" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="fas fa-bolt"></i></div>
+      <div class="brand-text">
+        <div class="brand-name">Slidexpress</div>
+        <div class="brand-sub">Project Tracker</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">WORKSPACE</div>
+      <a href="#" class="nav-item active" data-section="dashboard">
+        <i class="fas fa-th-large"></i><span>Dashboard</span>
+      </a>
+      <a href="#" class="nav-item" data-section="files">
+        <i class="fas fa-file-powerpoint"></i><span>Files</span>
+      </a>
+      <a href="#" class="nav-item" data-section="chat">
+        <i class="fas fa-comments"></i><span>Chat</span>
+        <span class="nav-badge" id="chat-badge" style="display:none"></span>
+      </a>
+
+      <div class="nav-section-label lead-admin-only" style="display:none">MANAGEMENT</div>
+      <a href="#" class="nav-item lead-admin-only" data-section="projects" style="display:none">
+        <i class="fas fa-folder-open"></i><span>Projects</span>
+      </a>
+      <a href="#" class="nav-item lead-admin-only" data-section="reports" style="display:none">
+        <i class="fas fa-chart-pie"></i><span>Reports</span>
+      </a>
+      <a href="#" class="nav-item lead-admin-only" data-section="requests" style="display:none">
+        <i class="fas fa-user-clock"></i><span>Access Requests</span>
+        <span class="nav-badge" id="requests-badge" style="display:none"></span>
+      </a>
+      <a href="#" class="nav-item admin-only" data-section="team" style="display:none">
+        <i class="fas fa-users"></i><span>Team</span>
+      </a>
+      <a href="#" class="nav-item admin-only" data-section="settings" style="display:none">
+        <i class="fas fa-gear"></i><span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="user-avatar-sm" id="sidebar-avatar"></div>
+        <div class="user-details">
+          <div class="user-name-sm" id="sidebar-name">—</div>
+          <div class="user-role-sm" id="sidebar-role">—</div>
+        </div>
+      </div>
+      <button id="logout-btn" class="logout-btn" title="Sign Out"><i class="fas fa-right-from-bracket"></i></button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main id="content">
+    <header class="topbar">
+      <div class="topbar-left"><h2 id="page-title">Dashboard</h2></div>
+      <div class="topbar-right">
+        <div class="online-pill"><i class="fas fa-circle"></i> <span id="online-count">1</span> online</div>
+        <button class="icon-btn" id="notif-btn" title="Notifications">
+          <i class="fas fa-bell"></i>
+          <span class="notif-dot" id="notif-dot" style="display:none"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- SECTIONS -->
+    <div id="section-dashboard" class="section active-section"></div>
+    <div id="section-files" class="section"></div>
+    <div id="section-chat" class="section chat-layout"></div>
+    <div id="section-projects" class="section"></div>
+    <div id="section-reports" class="section"></div>
+    <div id="section-requests" class="section"></div>
+    <div id="section-team" class="section"></div>
+    <div id="section-settings" class="section"></div>
+  </main>
+
+</div>
+
+<!-- ═══════════════════════ NOTIFICATION PANEL ══════════════════════════════ -->
+<div id="notif-panel" class="notif-panel" style="display:none">
+  <div class="notif-header">
+    <span>Notifications</span>
+    <button id="mark-all-read" class="btn-link-sm">Mark all read</button>
+  </div>
+  <div id="notif-list" class="notif-list"></div>
+</div>
+
+<!-- ═══════════════════════ FILE MODAL ══════════════════════════════════════ -->
+<div class="modal fade" id="fileModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="fileModalTitle">Add File</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="fm-id">
+        <div class="row g-3">
+          <div class="col-md-8">
+            <label class="form-label">File Name <span class="text-danger">*</span></label>
+            <input type="text" id="fm-filename" class="form-control" placeholder="e.g. brochure_v2.pdf">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Pages</label>
+            <input type="number" id="fm-pages" class="form-control" placeholder="e.g. 12" min="1">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Project</label>
+            <select id="fm-project" class="form-select"><option value="">— No Project —</option></select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Assign To</label>
+            <div id="fm-assigned-list" class="p-2 border rounded bg-light" style="max-height:120px;overflow-y:auto">
+              <!-- Multiple member checkboxes -->
+            </div>
+            <div class="form-text small">Select one or more members.</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Priority</label>
+            <select id="fm-priority" class="form-select">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Status</label>
+            <select id="fm-status" class="form-select">
+              <option value="pending">Pending</option>
+              <option value="assigned">Assigned</option>
+              <option value="in_progress">In Progress</option>
+              <option value="review">Review</option>
+              <option value="revision">Revision</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Deadline</label>
+            <input type="date" id="fm-deadline" class="form-control">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Notes</label>
+            <textarea id="fm-notes" class="form-control" rows="2" placeholder="Optional notes..."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" id="fm-save">Save File</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SCAN FOLDER MODAL ═══════════════════════════════ -->
+<div class="modal fade" id="scanModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="fas fa-folder-open me-2 text-warning"></i>Scan Folder for PDF & PPT Files</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="resetScanModal()"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Step 1: Path input -->
+        <div class="scan-step" id="scan-step-1">
+          <div class="d-flex gap-2 align-items-end">
+            <div class="flex-fill">
+              <label class="form-label fw-600">Folder Path on Server PC</label>
+              <input type="text" id="scan-folder-path" class="form-control font-mono"
+                placeholder="e.g.  D:\Projects\Client PDFs  or  C:\Users\You\Documents\PDFs">
+              <div class="form-text">Enter the full path to the folder containing your PDF files. Subfolders are scanned automatically.</div>
+            </div>
+            <button class="btn btn-primary px-4" id="scan-btn" style="height:38px">
+              <i class="fas fa-search me-1"></i>Scan
+            </button>
+          </div>
+          <div id="scan-error" class="alert alert-danger mt-3" style="display:none"></div>
+        </div>
+
+        <!-- Step 2: Results -->
+        <div id="scan-step-2" style="display:none">
+          <div class="scan-summary mb-3">
+            <div class="scan-stat"><span id="scan-total"></span><small>Total PDFs</small></div>
+            <div class="scan-stat new"><span id="scan-new"></span><small>New (not in tracker)</small></div>
+            <div class="scan-stat existing"><span id="scan-existing"></span><small>Already tracked</small></div>
+          </div>
+
+          <div id="scan-no-new" style="display:none" class="text-center py-4 text-muted">
+            <i class="fas fa-check-circle d-block mb-2" style="font-size:32px;color:#10b981"></i>
+            All PDFs in this folder are already in the tracker. Nothing new to import.
+          </div>
+
+          <div id="scan-has-new">
+            <!-- Import settings -->
+            <div class="scan-import-settings">
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label">Assign to Project</label>
+                  <select id="scan-project" class="form-select form-select-sm">
+                    <option value="">— No Project —</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Assign to Members</label>
+                  <div id="scan-assignee-list" class="p-2 border rounded bg-light" style="max-height:100px;overflow-y:auto">
+                    <!-- Multiple member checkboxes -->
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Priority</label>
+                  <select id="scan-priority" class="form-select form-select-sm">
+                    <option value="low">Low</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- File list -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="fw-600" style="font-size:13px">Select files to import:</div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-secondary" onclick="selectAllScanFiles(true)">Select All</button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="selectAllScanFiles(false)">Deselect All</button>
+              </div>
+            </div>
+            <div class="scan-file-list" id="scan-file-list"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" id="scan-footer" style="display:none">
+        <button class="btn btn-light" data-bs-dismiss="modal" onclick="resetScanModal()">Cancel</button>
+        <button class="btn btn-primary" id="scan-import-btn">
+          <i class="fas fa-file-import me-1"></i>Import Selected (<span id="scan-selected-count">0</span>)
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ FILE DETAIL OFFCANVAS ═══════════════════════════ -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="fileDetail" style="width:480px">
+  <div class="offcanvas-header border-bottom">
+    <div>
+      <h5 class="offcanvas-title" id="fd-filename">File Details</h5>
+      <div id="fd-project-name" class="text-muted small"></div>
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body p-0"><div id="fd-body"></div></div>
+</div>
+
+<!-- ═══════════════════════ PROJECT MODAL ═══════════════════════════════════ -->
+<div class="modal fade" id="projectModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="projectModalTitle">New Project</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="pm-id">
+        <div class="mb-3">
+          <label class="form-label">Project Name <span class="text-danger">*</span></label>
+          <input type="text" id="pm-name" class="form-control" placeholder="e.g. Client A – Q1 2024">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea id="pm-desc" class="form-control" rows="2" placeholder="What is this project about?"></textarea>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Deadline</label>
+            <input type="date" id="pm-deadline" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Status</label>
+            <select id="pm-status" class="form-select">
+              <option value="active">Active</option>
+              <option value="paused">Paused</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" id="pm-save">Save Project</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ USER MODAL ══════════════════════════════════════ -->
+<div class="modal fade" id="userModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="userModalTitle">Add Team Member</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="um-id">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Full Name <span class="text-danger">*</span></label>
+            <input type="text" id="um-name" class="form-control" placeholder="John Doe">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email <span class="text-danger">*</span></label>
+            <input type="email" id="um-email" class="form-control" placeholder="john@slidexpress.com">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Password <span id="um-pw-hint" class="text-muted">(required for new)</span></label>
+            <input type="password" id="um-password" class="form-control" placeholder="Set password">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Role</label>
+            <select id="um-role" class="form-select">
+              <option value="member">Member</option>
+              <option value="team_lead">Team Lead</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Team</label>
+            <select id="um-team" class="form-select">
+              <option value="design">Design Team</option>
+              <option value="ppt">PPT Team</option>
+              <option value="general">General</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Status</label>
+            <select id="um-active" class="form-select">
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" id="um-save">Save Member</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ STATUS NOTE MODAL ═══════════════════════════════ -->
+<div class="modal fade" id="statusModal" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="sm-title">Update Status</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p id="sm-desc" class="text-muted small mb-2"></p>
+        <textarea id="sm-note" class="form-control" rows="3" placeholder="Add a note (optional)..."></textarea>
+        <input type="hidden" id="sm-file-id">
+        <input type="hidden" id="sm-new-status">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" id="sm-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ APPROVE REQUEST MODAL ═══════════════════════════ -->
+<div class="modal fade" id="approveModal" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Approve Access Request</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted small">Approving access for: <b id="approve-name"></b></p>
+        <label class="form-label">Assign Role</label>
+        <select id="approve-role" class="form-select">
+          <option value="member">Member</option>
+          <option value="team_lead">Team Lead</option>
+        </select>
+        <input type="hidden" id="approve-req-id">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-success" id="approve-confirm"><i class="fas fa-check me-1"></i>Approve & Create Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ REJECT REQUEST MODAL ════════════════════════════ -->
+<div class="modal fade" id="rejectModal" tabindex="-1">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Reject Access Request</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted small">Rejecting request from: <b id="reject-name"></b></p>
+        <label class="form-label">Reason <span class="text-muted">(optional — helps the requester understand)</span></label>
+        <textarea id="reject-reason" class="form-control" rows="3" placeholder="e.g. We don't have a position available right now."></textarea>
+        <input type="hidden" id="reject-req-id">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-danger" id="reject-confirm"><i class="fas fa-times me-1"></i>Reject Request</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ END SHIFT MODAL ═════════════════════════════════ -->
+<div class="modal fade" id="endShiftModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">End Shift Update</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted small">Before you leave, please update the status of your active files.</p>
+        <div id="esm-files-list" class="mb-3">
+          <!-- Active files will be listed here -->
+        </div>
+        <div id="esm-empty" style="display:none" class="text-center py-3">
+          <i class="fas fa-check-circle text-success mb-2" style="font-size:24px"></i>
+          <p>You have no active files in progress. Ready to sign out!</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-danger" id="esm-logout">Update & Sign Out</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
